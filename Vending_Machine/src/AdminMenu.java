@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -300,14 +301,46 @@ public class AdminMenu {
     }
 
     private double readSalesFromFile(String date) throws IOException {
-        // 매출 파일에서 해당 날짜의 매출을 읽어오는 로직을 구현해야 합니다.
+        // 매출 파일에서 해당 날짜의 매출을 읽어오는 로직을 구현합니다.
         // 예시로 파일이 없거나 읽어올 수 없는 경우에는 0.0을 반환합니다.
+
+        // 파일 경로와 형식에 맞게 수정해야 합니다.
+        String filePath = FILE_PATH;
+
+        try (Scanner scanner = new Scanner(new File(filePath))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] data = line.split(",");
+                if (data.length == 3 && data[0].equals(date)) {
+                    return Double.parseDouble(data[2]);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("매출 파일이 없습니다.");
+        }
+
         return 0.0;
     }
 
     private double readSalesFromFile(String date, String beverageName) throws IOException {
-        // 매출 파일에서 해당 날짜와 음료 이름의 매출을 읽어오는 로직을 구현해야 합니다.
+        // 매출 파일에서 해당 날짜와 음료 이름의 매출을 읽어오는 로직을 구현합니다.
         // 예시로 파일이 없거나 읽어올 수 없는 경우에는 0.0을 반환합니다.
+
+        // 파일 경로와 형식에 맞게 수정해야 합니다.
+        String filePath = FILE_PATH;
+
+        try (Scanner scanner = new Scanner(new File(filePath))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                String[] data = line.split(",");
+                if (data.length == 3 && data[0].equals(date) && data[1].equals(beverageName)) {
+                    return Double.parseDouble(data[2]);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("매출 파일이 없습니다.");
+        }
+
         return 0.0;
     }
 }
