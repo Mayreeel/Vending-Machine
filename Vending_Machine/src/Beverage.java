@@ -70,11 +70,15 @@ public class Beverage {
         }
 
         // 음료 1개씩 판매
-        beverages[0].decreaseStock();
-        beverages[1].decreaseStock();
-        beverages[2].decreaseStock();
-        beverages[3].decreaseStock();
-        beverages[4].decreaseStock();
+        try {
+            beverages[0].decreaseStock();
+            beverages[1].decreaseStock();
+            beverages[2].decreaseStock();
+            beverages[3].decreaseStock();
+            beverages[4].decreaseStock();
+        } catch (SoldOutException e) {
+            System.out.println(e.getMessage());
+        }
 
         // 각 음료의 정보 출력 (판매 후)
         for (Beverage beverage : beverages) {

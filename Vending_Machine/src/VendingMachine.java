@@ -17,12 +17,16 @@ public class VendingMachine implements IVendingMachine {
     public void sellBeverage(int index) {
         if (index >= 0 && index < beverages.length) {
             Beverage selectedBeverage = beverages[index];
-            if (selectedBeverage.getStock() > 0) {
-                System.out.println("음료 " + selectedBeverage.getName() + "을/를 선택하셨습니다. 가격: " + selectedBeverage.getPrice() + "원");
-                selectedBeverage.decreaseStock();
-                // 화폐 처리 등 추가 구현 로직
-            } else {
-                System.out.println("음료 " + selectedBeverage.getName() + "은/는 품절되었습니다.");
+            try {
+                if (selectedBeverage.getStock() > 0) {
+                    System.out.println("음료 " + selectedBeverage.getName() + "을/를 선택하셨습니다. 가격: " + selectedBeverage.getPrice() + "원");
+                    selectedBeverage.decreaseStock();
+                    // 화폐 처리 등 추가 구현 로직
+                } else {
+                    System.out.println("음료 " + selectedBeverage.getName() + "은/는 품절되었습니다.");
+                }
+            } catch (SoldOutException e) {
+                System.out.println(e.getMessage());
             }
         } else {
             System.out.println("유효하지 않은 음료 번호입니다.");

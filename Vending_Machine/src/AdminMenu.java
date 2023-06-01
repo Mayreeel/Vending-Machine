@@ -240,7 +240,14 @@ public class AdminMenu {
         // 최소한의 화폐 보존 (임의로 지정)
         int[] minimumCoins = {0, 1, 1, 0, 0};  // 100원, 500원 동전은 보존
 
-        int[] collectedCoins = change.calculateChange(amount);
+        int[] collectedCoins;
+        try {
+            collectedCoins = change.calculateChange(amount);
+        } catch (InsufficientChangeException e) {
+            System.out.println("수금할 수 없는 금액입니다.");
+            return;
+        }
+
         if (collectedCoins != null) {
             for (int i = 0; i < collectedCoins.length; i++) {
                 if (collectedCoins[i] > minimumCoins[i]) {
