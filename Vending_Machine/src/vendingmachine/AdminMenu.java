@@ -28,44 +28,47 @@ public class AdminMenu {
         this.salesByBeverage = new HashMap<>();
     }
 
+    /**
+     * 관리자 메뉴를 표시하는 메서드
+     */
     public void showMenu() {
-        JFrame frame = new JFrame("Admin Menu");
+        JFrame frame = new JFrame("관리자 메뉴");
         frame.setSize(400, 300);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JLabel titleLabel = new JLabel("Select an option");
+        JLabel titleLabel = new JLabel("버튼을 선택하세요");
         titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         panel.add(titleLabel);
 
-        JButton monthlySalesButton = new JButton("Calculate Monthly Sales");
+        JButton monthlySalesButton = new JButton("월/일 매출 계산");
         monthlySalesButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         monthlySalesButton.addActionListener(e -> calculateMonthlySales());
         panel.add(monthlySalesButton);
 
-        JButton salesByBeverageButton = new JButton("Calculate Sales by Beverage");
+        JButton salesByBeverageButton = new JButton("음료별 월/일 매출 계산");
         salesByBeverageButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         salesByBeverageButton.addActionListener(e -> calculateSalesByBeverage());
         panel.add(salesByBeverageButton);
 
-        JButton replenishBeverageStockButton = new JButton("Replenish Beverage Stock");
+        JButton replenishBeverageStockButton = new JButton("음료 재고 보충");
         replenishBeverageStockButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         replenishBeverageStockButton.addActionListener(e -> replenishBeverageStock());
         panel.add(replenishBeverageStockButton);
 
-        JButton replenishChangeStockButton = new JButton("Replenish Change Stock");
+        JButton replenishChangeStockButton = new JButton("잔돈 재고 보충");
         replenishChangeStockButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         replenishChangeStockButton.addActionListener(e -> replenishChangeStock());
         panel.add(replenishChangeStockButton);
 
-        JButton checkChangeStockButton = new JButton("Check Change Stock");
+        JButton checkChangeStockButton = new JButton("잔돈 재고 확인");
         checkChangeStockButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         checkChangeStockButton.addActionListener(e -> checkChangeStock());
         panel.add(checkChangeStockButton);
 
-        JButton collectChangeButton = new JButton("Collect Change");
+        JButton collectChangeButton = new JButton("잔돈 수금");
         collectChangeButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         collectChangeButton.addActionListener(e -> collectChange());
         panel.add(collectChangeButton);
@@ -74,48 +77,61 @@ public class AdminMenu {
         frame.setVisible(true);
     }
 
+    /**
+     * 잔돈을 수금하는 메서드
+     */
     private void collectChange() {
         int totalChange = 0;
         StringBuilder changeInfo = new StringBuilder();
 
+        // 지폐 수금
         for (Bill bill : change.getBills()) {
             int billCount = bill.getStore();
             if (billCount > 3) {
                 billCount -= 3;
                 bill.decreaseStore(billCount);
                 totalChange += bill.getUnit() * billCount;
-                changeInfo.append("$").append(bill.getUnit()).append(" Bills: ").append(billCount).append("\n");
+                changeInfo.append(bill.getUnit()).append("원 지폐: ").append(billCount).append("\n");
             }
         }
 
+        // 동전 수금
         for (Coin coin : change.getCoins()) {
             int coinCount = coin.getStore();
             if (coinCount > 3) {
                 coinCount -= 3;
                 coin.decreaseStore(coinCount);
                 totalChange += coin.getUnit() * coinCount;
-                changeInfo.append("$").append(coin.getUnit()).append(" Coins: ").append(coinCount).append("\n");
+                changeInfo.append(coin.getUnit()).append("원 동전: ").append(coinCount).append("\n");
             }
         }
 
-        JOptionPane.showMessageDialog(null, "Change collected successfully\nTotal Change: $" + totalChange + "\n\nCollected Change:\n" + changeInfo, "Collect Change", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "수금 완료\n총 : " + totalChange + "원\n\n나온 돈:\n" + changeInfo, "나온 돈", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * 잔돈 재고를 확인하는 메서드
+     */
     private void checkChangeStock() {
         StringBuilder stockInfo = new StringBuilder();
-        stockInfo.append("Change Stock:\n");
+        stockInfo.append("잔돈 재고:\n");
 
+        // 지폐 재고 확인
         for (Bill bill : change.getBills()) {
-            stockInfo.append("$").append(bill.getUnit()).append(" Bills: ").append(bill.getStore()).append("\n");
+            stockInfo.append(bill.getUnit()).append("원 지폐: ").append(bill.getStore()).append("\n");
         }
 
+        // 동전 재고 확인
         for (Coin coin : change.getCoins()) {
-            stockInfo.append("$").append(coin.getUnit()).append(" Coins: ").append(coin.getStore()).append("\n");
+            stockInfo.append(coin.getUnit()).append("원 동전: ").append(coin.getStore()).append("\n");
         }
 
-        JOptionPane.showMessageDialog(null, stockInfo.toString(), "Change Stock", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, stockInfo.toString(), "잔돈 변경", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * 음료 재고를 보충하는 메서드
+     */
     private void replenishBeverageStock() {
         JComboBox<String> beverageComboBox = new JComboBox<>();
         for (Beverage beverage : beverages) {
@@ -126,11 +142,11 @@ public class AdminMenu {
         JSpinner quantitySpinner = new JSpinner(spinnerModel);
 
         Object[] message = {
-                "Beverage:", beverageComboBox,
-                "Quantity:", quantitySpinner
+                "음료:", beverageComboBox,
+                "개수:", quantitySpinner
         };
 
-        int option = JOptionPane.showOptionDialog(null, message, "Replenish Beverage Stock", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        int option = JOptionPane.showOptionDialog(null, message, "음료 재고 보충", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
         if (option == JOptionPane.OK_OPTION) {
             String selectedBeverageName = (String) beverageComboBox.getSelectedItem();
             int quantity = (int) quantitySpinner.getValue();
@@ -138,37 +154,40 @@ public class AdminMenu {
             Beverage selectedBeverage = vendingMachine.findBeverage(beverages, selectedBeverageName);
             if (selectedBeverage != null) {
                 vendingMachine.replenishBeverageStock(selectedBeverage, quantity);
-                JOptionPane.showMessageDialog(null, "Replenished " + selectedBeverage.getName() + " stock by " + quantity, "Replenish Beverage Stock", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "음료 보충 " + selectedBeverage.getName() + " " + quantity + "개", "음료 재고 보충", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(null, "Beverage not found!", "Replenish Beverage Stock", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "음료 찾기 실패!", "음료 재고 보충", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
 
+    /**
+     * 잔돈 재고를 보충하는 메서드
+     */
     private void replenishChangeStock() {
         JComboBox<String> denominationComboBox = new JComboBox<>();
 
-        denominationComboBox.addItem("$10");
-        denominationComboBox.addItem("$50");
-        denominationComboBox.addItem("$100");
-        denominationComboBox.addItem("$500");
-        denominationComboBox.addItem("$1000");
+        denominationComboBox.addItem("₩10");
+        denominationComboBox.addItem("₩50");
+        denominationComboBox.addItem("₩100");
+        denominationComboBox.addItem("₩500");
+        denominationComboBox.addItem("₩1000");
 
         SpinnerModel spinnerModel = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
         JSpinner quantitySpinner = new JSpinner(spinnerModel);
 
         Object[] message = {
-                "Denomination:", denominationComboBox,
-                "Quantity:", quantitySpinner
+                "잔돈:", denominationComboBox,
+                "개수:", quantitySpinner
         };
 
-        int option = JOptionPane.showOptionDialog(null, message, "Replenish Change Stock", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        int option = JOptionPane.showOptionDialog(null, message, "잔돈 재고 보충", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
         if (option == JOptionPane.OK_OPTION) {
             String selectedDenomination = (String) denominationComboBox.getSelectedItem();
-            int denomination = Integer.parseInt(Objects.requireNonNull(selectedDenomination).substring(1)); // Remove the '$' character
+            int denomination = Integer.parseInt(Objects.requireNonNull(selectedDenomination).substring(1));
             int quantity = (int) quantitySpinner.getValue();
 
-            // Replenish change stock
+            // 잔돈 재고 보충
             Bill bill = change.findBill(denomination);
             if (bill != null) {
                 bill.increaseStore(quantity);
@@ -179,10 +198,13 @@ public class AdminMenu {
                 coin.increaseStore(quantity);
             }
 
-            JOptionPane.showMessageDialog(null, "Replenished change stock", "Replenish Change Stock", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "잔돈 보충 성공", "잔돈 재고 보충", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
+    /**
+     * 음료별 매출을 계산하는 메서드
+     */
     public void calculateSalesByBeverage() {
         JComboBox<String> beverageComboBox = new JComboBox<>();
         for (Beverage beverage : beverages) {
@@ -190,10 +212,10 @@ public class AdminMenu {
         }
 
         Object[] message = {
-                "Select a beverage:", beverageComboBox
+                "음료를 선택하시오:", beverageComboBox
         };
 
-        int option = JOptionPane.showOptionDialog(null, message, "Select Beverage", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
+        int option = JOptionPane.showOptionDialog(null, message, "음료 선택", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
         if (option == JOptionPane.OK_OPTION) {
             String selectedBeverage = (String) beverageComboBox.getSelectedItem();
             loadSalesData();
@@ -201,6 +223,9 @@ public class AdminMenu {
         }
     }
 
+    /**
+     * 매출 데이터를 로드하는 메서드
+     */
     private void loadSalesData() {
         try {
             String filePath = "sales.txt";
@@ -248,6 +273,9 @@ public class AdminMenu {
         }
     }
 
+    /**
+     * 음료 가격을 찾는 메서드
+     */
     private int findBeveragePrice(ArrayList<Beverage> beverages, String name) {
         for (Beverage beverage : beverages) {
             if (beverage.getName().equals(name)) {
@@ -257,6 +285,9 @@ public class AdminMenu {
         return -1;
     }
 
+    /**
+     * 월/일 매출을 계산하는 메서드
+     */
     public void calculateMonthlySales() {
         try {
             String filePath = "sales.txt";
@@ -306,18 +337,24 @@ public class AdminMenu {
         printDailySales();
     }
 
+    /**
+     * 월별 매출을 출력하는 메서드
+     */
     private void printMonthlySales() {
         StringBuilder salesInfo = new StringBuilder();
         salesInfo.append("===== 월별 매출 =====\n");
         for (String month : salesByMonth.keySet()) {
             if (month.matches("\\d{4}-\\d{2}")) { // YYYY-MM 형식만 출력
                 int totalSales = salesByMonth.get(month);
-                salesInfo.append(month).append(": $").append(totalSales).append("\n");
+                salesInfo.append(month).append(": ₩").append(totalSales).append("\n");
             }
         }
-        JOptionPane.showMessageDialog(null, salesInfo.toString(), "Monthly Sales", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, salesInfo.toString(), "월 매출", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * 일별 매출을 출력하는 메서드
+     */
     private void printDailySales() {
         StringBuilder salesInfo = new StringBuilder();
         salesInfo.append("===== 일별 매출 =====\n");
@@ -328,13 +365,16 @@ public class AdminMenu {
         for (String date : dailySales.keySet()) {
             if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // YYYY-MM-DD 형식만 출력
                 int totalSales = dailySales.get(date);
-                salesInfo.append(date).append(": $").append(totalSales).append("\n");
+                salesInfo.append(date).append(": ₩").append(totalSales).append("\n");
             }
         }
 
-        JOptionPane.showMessageDialog(null, salesInfo.toString(), "Daily Sales", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, salesInfo.toString(), "일 매출", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    /**
+     * 음료별 매출을 출력하는 메서드
+     */
     private void printSalesByBeverage(String selectedBeverage) {
         StringBuilder salesInfo = new StringBuilder();
         salesInfo.append("===== ").append(selectedBeverage).append(" 매출 =====\n");
@@ -354,7 +394,7 @@ public class AdminMenu {
         }
         for (String month : monthlySales.keySet()) {
             int totalSales = monthlySales.get(month);
-            salesInfo.append(month).append(": $").append(totalSales).append("\n");
+            salesInfo.append(month).append(": ₩").append(totalSales).append("\n");
         }
 
         salesInfo.append("\n일별 매출:\n");
@@ -363,13 +403,13 @@ public class AdminMenu {
             for (String date : sales.keySet()) {
                 if (date.matches("\\d{4}-\\d{2}-\\d{2}")) { // YYYY-MM-DD 형식만 처리
                     int totalSales = sales.get(date);
-                    salesInfo.append(date).append(": $").append(totalSales).append("\n");
+                    salesInfo.append(date).append(": ₩").append(totalSales).append("\n");
                 }
             }
         } else {
             salesInfo.append("선택한 음료의 매출 데이터가 없습니다.\n");
         }
 
-        JOptionPane.showMessageDialog(null, salesInfo.toString(), "Sales by Beverage", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, salesInfo.toString(), "음료별 매출", JOptionPane.INFORMATION_MESSAGE);
     }
 }

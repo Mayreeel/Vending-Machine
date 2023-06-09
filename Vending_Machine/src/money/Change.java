@@ -3,7 +3,7 @@ package money;
 public class Change {
     Coin[] coins;
     Bill[] bills;
-    public Change(){
+    public Change(){ // 거스름돈 초기화
         coins = new Coin[4];
         coins[0] = new Coin(10);
         coins[1] = new Coin(50);
